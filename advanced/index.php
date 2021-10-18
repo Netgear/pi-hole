@@ -359,9 +359,9 @@ setHeader();
       return;
     }
     $.ajax({
-      url: "/admin/scripts/pi-hole/php/add.php",
+      url: "/admin/scripts/pi-hole/php/groups.php",
       method: "post",
-      data: {"domain":domain, "list":"white", "pw":pw.val()},
+      data: {"domain":domain, "action": "add_domain", "list":"white", "pw":pw.val()},
       success: function(response) {
         if(response.indexOf("Pi-hole blocking") !== -1) {
           setTimeout(function(){window.location.reload(1);}, 10000);
