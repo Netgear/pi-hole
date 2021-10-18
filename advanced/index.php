@@ -11,6 +11,8 @@ $serverName = htmlspecialchars($_SERVER["SERVER_NAME"]);
 // Remove external ipv6 brackets if any
 $serverName = preg_replace('/^\[(.*)\]$/', '${1}', $serverName);
 
+require_once('/admin/scripts/pi-hole/php/password.php');
+
 if (!is_file("/etc/pihole/setupVars.conf"))
   die("[ERROR] File not found: <code>/etc/pihole/setupVars.conf</code>");
 
@@ -361,7 +363,7 @@ setHeader();
     $.ajax({
       url: "/admin/scripts/pi-hole/php/groups.php",
       method: "post",
-      data: {"domain":domain, "action": "add_domain", "list":"white", "pw":pw.val()},
+      data: {domain: domain, action: "add_domain", "pw":pw.val(), list:"white"},
       success: function(response) {
         if(response.indexOf("Pi-hole blocking") !== -1) {
           setTimeout(function(){window.location.reload(1);}, 10000);
