@@ -28,7 +28,7 @@ jobs:
     needs: smoke-test
     strategy:
       matrix:
-        distro: [debian_9, debian_10, debian_11, ubuntu_16, ubuntu_18, ubuntu_20, ubuntu_21, centos_7, centos_8, fedora_32, fedora_33]
+        distro: [debian_9, debian_10, debian_11, ubuntu_16, ubuntu_18, ubuntu_20, ubuntu_21, centos_7, centos_8, fedora_33, fedora_34]
     env:
       DISTRO: ${{matrix.distro}}
     steps:
@@ -36,10 +36,10 @@ jobs:
       name: Checkout repository
       uses: actions/checkout@v2
     -
-      name: Set up Python 3.7
+      name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
-        python-version: 3.7
+        python-version: 3.8
     -
       name: Install dependencies
       run: pip install -r test/requirements.txt

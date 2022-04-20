@@ -21,7 +21,7 @@ matchType="match"
 # Source pihole-FTL from install script
 pihole_FTL="${piholeDir}/pihole-FTL.conf"
 if [[ -f "${pihole_FTL}" ]]; then
-  source "${pihole_FTL}"
+    source "${pihole_FTL}"
 fi
 
 # Set this only after sourcing pihole-FTL.conf as the gravity database path may
@@ -48,7 +48,7 @@ scanList(){
         # Iterate through each regexp and check whether it matches the domainQuery
         # If it does, print the matching regexp and continue looping
         # Input 1 - regexps | Input 2 - domainQuery
-        "regex" ) 
+        "regex" )
             for list in ${lists}; do
                 if [[ "${domain}" =~ ${list} ]]; then
                     printf "%b\n" "${list}";
@@ -109,27 +109,27 @@ scanDatabaseTable() {
     # behavior. The "ESCAPE '\'" clause specifies that an underscore preceded by an '\' should be matched
     # as a literal underscore character. We pretreat the $domain variable accordingly to escape underscores.
     if [[ "${table}" == "gravity" ]]; then
-      case "${exact}" in
-          "exact" ) querystr="SELECT gravity.domain,adlist.address,adlist.enabled FROM gravity LEFT JOIN adlist ON adlist.id = gravity.adlist_id WHERE domain = '${domain}'";;
-          *       ) querystr="SELECT gravity.domain,adlist.address,adlist.enabled FROM gravity LEFT JOIN adlist ON adlist.id = gravity.adlist_id WHERE domain LIKE '%${domain//_/\\_}%' ESCAPE '\\'";;
-      esac
+        case "${exact}" in
+            "exact" ) querystr="SELECT gravity.domain,adlist.address,adlist.enabled FROM gravity LEFT JOIN adlist ON adlist.id = gravity.adlist_id WHERE domain = '${domain}'";;
+            *       ) querystr="SELECT gravity.domain,adlist.address,adlist.enabled FROM gravity LEFT JOIN adlist ON adlist.id = gravity.adlist_id WHERE domain LIKE '%${domain//_/\\_}%' ESCAPE '\\'";;
+        esac
     else
-      case "${exact}" in
-          "exact" ) querystr="SELECT domain,enabled FROM domainlist WHERE type = '${type}' AND domain = '${domain}'";;
-          *       ) querystr="SELECT domain,enabled FROM domainlist WHERE type = '${type}' AND domain LIKE '%${domain//_/\\_}%' ESCAPE '\\'";;
-      esac
+        case "${exact}" in
+            "exact" ) querystr="SELECT domain,enabled FROM domainlist WHERE type = '${type}' AND domain = '${domain}'";;
+            *       ) querystr="SELECT domain,enabled FROM domainlist WHERE type = '${type}' AND domain LIKE '%${domain//_/\\_}%' ESCAPE '\\'";;
+        esac
     fi
 
     # Send prepared query to gravity database
-    result="$(sqlite3 "${gravityDBfile}" "${querystr}")" 2> /dev/null
+    result="$(pihole-FTL sqlite3 "${gravityDBfile}" "${querystr}")" 2> /dev/null
     if [[ -z "${result}" ]]; then
         # Return early when there are no matches in this table
         return
     fi
 
     if [[ "${table}" == "gravity" ]]; then
-      echo "${result}"
-      return
+        echo "${result}"
+        return
     fi
 
     # Mark domain as having been white-/blacklist matched (global variable)
@@ -164,7 +164,7 @@ scanRegexDatabaseTable() {
     type="${3:-}"
 
     # Query all regex from the corresponding database tables
-    mapfile -t regexList < <(sqlite3 "${gravityDBfile}" "SELECT domain FROM domainlist WHERE type = ${type}" 2> /dev/null)
+    mapfile -t regexList < <(pihole-FTL sqlite3 "${gravityDBfile}" "SELECT domain FROM domainlist WHERE type = ${type}" 2> /dev/null)
 
     # If we have regexps to process
     if [[ "${#regexList[@]}" -ne 0 ]]; then
@@ -233,15 +233,15 @@ for result in "${results[@]}"; do
     adlistAddress="${extra/|*/}"
     extra="${extra#*|}"
     if [[ "${extra}" == "0" ]]; then
-      extra="(disabled)"
+        extra=" (disabled)"
     else
-      extra=""
+        extra=""
     fi
 
     if [[ -n "${blockpage}" ]]; then
         echo "0 ${adlistAddress}"
     elif [[ -n "${exact}" ]]; then
-        echo "  - ${adlistAddress} ${extra}"
+        echo "  - ${adlistAddress}${extra}"
     else
         if [[ ! "${adlistAddress}" == "${adlistAddress_prev:-}" ]]; then
             count=""
@@ -256,7 +256,7 @@ for result in "${results[@]}"; do
             [[ "${count}" -gt "${max_count}" ]] && continue
             echo "   ${COL_GRAY}Over ${count} results found, skipping rest of file${COL_NC}"
         else
-            echo "   ${match} ${extra}"
+            echo "   ${match}${extra}"
         fi
     fi
 done
